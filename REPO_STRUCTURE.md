@@ -1,0 +1,27 @@
+```plaintext
+/globos-backend/
+    /auth/
+    /users/
+    /business/
+    /ecommerce/
+    /logistics/
+    /workforce/
+    /documents/
+    /finance/
+    /notifications/
+    /admin/
+    ...
+/globos-frontend/
+    /web/
+    /mobile/
+    ...
+/docs/
+    architecture.md
+    requirements.md
+    api-spec.md
+    ...
+/infrastructure/
+    /deployment/
+    /ci-cd/
+...
+```
