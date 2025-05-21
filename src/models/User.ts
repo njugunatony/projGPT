@@ -1,5 +1,5 @@
 export interface User {
-  id: string; // Firestore doc id (not UID unless you enforce it)
+  id: string;
   email: string;
   tenantId: string;
   role: "superadmin" | "hr_admin" | "manager" | "employee";

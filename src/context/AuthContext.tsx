@@ -1,4 +1,3 @@
-// ...as previously provided, but add a check for superadmin and expose the email as well
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../firebase";
