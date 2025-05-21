@@ -1,7 +1,9 @@
 export interface User {
-  id: string;
+  id: string; // Firestore doc id (not UID unless you enforce it)
   email: string;
-  role: "superadmin" | "tenant";
-  tenantId?: string;
+  tenantId: string;
+  role: "superadmin" | "hr_admin" | "manager" | "employee";
   displayName?: string;
+  createdAt: string;
+  updatedAt: string;
 }

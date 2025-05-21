@@ -1,26 +1,32 @@
 import { db } from "../firebase";
-import { collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, doc, getDocs, getDoc, addDoc, setDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { Employee } from "../models/Employee";
 
+const employeeCollection = (companyId: string) =>
+  collection(db, "companies", companyId, "employees");
+
 export const employeeService = {
-  list: async (tenantId: string): Promise<Employee[]> => {
-    const snap = await getDocs(collection(db, "employees"));
-    return snap.docs
-      .map(d => ({ id: d.id, ...(d.data() as any) }))
-      .filter(e => e.tenantId === tenantId);
+  list: async (companyId: string): Promise<Employee[]> => {
+    const snap = await getDocs(employeeCollection(companyId));
+    return snap.docs.map(d => ({ id: d.id, ...d.data() } as Employee));
   },
-  create: async (data: Omit<Employee, "id">): Promise<Employee> => {
-    const docRef = await addDoc(collection(db, "employees"), data);
-    return { ...data, id: docRef.id };
+  get: async (companyId: string, employeeId: string): Promise<Employee | null> => {
+    const docRef = doc(db, "companies", companyId, "employees", employeeId);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? ({ id: docSnap.id, ...docSnap.data() } as Employee) : null;
   },
-  get: async (id: string): Promise<Employee | null> => {
-    const docSnap = await getDoc(doc(db, "employees", id));
-    return docSnap.exists() ? { id, ...(docSnap.data() as any) } : null;
+  create: async (companyId: string, data: Omit<Employee, "id" | "createdAt" | "updatedAt">) => {
+    const now = new Date().toISOString();
+    const docRef = await addDoc(employeeCollection(companyId), { ...data, createdAt: now, updatedAt: now });
+    return { id: docRef.id, ...data, createdAt: now, updatedAt: now };
   },
-  update: async (id: string, data: Partial<Employee>): Promise<void> => {
-    await updateDoc(doc(db, "employees", id), data);
+  update: async (companyId: string, employeeId: string, data: Partial<Employee>) => {
+    const now = new Date().toISOString();
+    const docRef = doc(db, "companies", companyId, "employees", employeeId);
+    await updateDoc(docRef, { ...data, updatedAt: now });
   },
-  remove: async (id: string): Promise<void> => {
-    await deleteDoc(doc(db, "employees", id));
+  remove: async (companyId: string, employeeId: string) => {
+    const docRef = doc(db, "companies", companyId, "employees", employeeId);
+    await deleteDoc(docRef);
   }
 };
