@@ -1,1 +1,4 @@
-"homepage": "https://github.com/njugunatony/projGPT.git"
+"scripts": {
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d build"
+}
