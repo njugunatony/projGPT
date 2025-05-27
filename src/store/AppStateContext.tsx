@@ -1,73 +1,31 @@
-// import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 
-// interface AppState {
-//   theme: "light" | "dark";
-//   language: string;
-//   // Add other global state properties here
-// }
-
-// interface AppContextProps {
-//   state: AppState;
-//   setState: React.Dispatch<React.SetStateAction<AppState>>;
-// }
-
-// const AppContext = createContext<AppContextProps>({
-//   state: {
-//     theme: "light",
-//     language: "en",
-//   },
-//   setState: () => {},
-// });
-
-// interface AppProviderProps {
-//   children: React.ReactNode;
-// }
-
-// export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-//   const [state, setState] = useState<AppState>({
-//     theme: "light",
-//     language: "en",
-//   });
-
-//   return (
-//     <AppContext.Provider value={{ state, setState }}>
-//       {children}
-//     </AppContext.Provider>
-//   );
-// };
-
-// export const useAppContext = () => useContext(AppContext);
-
-import React, { createContext, useState, useContext } from "react";
+// Type definitions
+type Theme = "light" | "dark";
+type Language = "en" | "sw";
 
 interface AppState {
-  theme: "light" | "dark";
-  language: string;
-  // Add other global state properties here
+  theme: Theme;
+  language: Language;
 }
 
-interface AppContextProps {
+interface AppContextType {
   state: AppState;
   setState: React.Dispatch<React.SetStateAction<AppState>>;
 }
 
-const AppContext = createContext<AppContextProps>({
-  state: {
-    theme: "light",
-    language: "en",
-  },
-  setState: () => {},
-});
+// Default state
+const defaultState: AppState = {
+  theme: "light",
+  language: "en",
+};
 
-interface AppProviderProps {
-  children: React.ReactNode;
-}
+// Create context
+const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const [state, setState] = useState<AppState>({
-    theme: "light",
-    language: "en",
-  });
+// Provider component
+export const AppStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [state, setState] = useState<AppState>(defaultState);
 
   return (
     <AppContext.Provider value={{ state, setState }}>
@@ -76,4 +34,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   );
 };
 
-export const useAppContext = () => useContext(AppContext);
+// Hook to use context
+export const useAppContext = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error("useAppContext must be used within AppStateProvider");
+  }
+  return context;
+};
